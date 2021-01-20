@@ -1,3 +1,11 @@
+.idea
+.vscode
+*/.DS_Store
+.go.sum
+go.sum
+erp
+main
+
 # Binaries for programs and plugins
 *.exe
 *.exe~
@@ -13,3 +21,5 @@
 
 # Dependency directories (remove the comment below to include it)
 # vendor/
+
+bin/*

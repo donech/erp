@@ -1,0 +1,7 @@
+log:
+  level: debug
+  format: json
+  stdout: true
+  file:
+    filename: "/Users/piaoweixiong/apps/log/app/erp/app.log"
+    maxSize: 500
