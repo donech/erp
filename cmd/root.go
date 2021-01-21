@@ -2,7 +2,6 @@ package cmd
 
 import (
 	"errors"
-	"fmt"
 	"log"
 	"os"
 
@@ -35,7 +34,6 @@ func init() {
 }
 
 func initConfig() {
-	log.Println("using config file: ", cfgFile)
 	viper.SetConfigFile(cfgFile)
 	viper.AutomaticEnv() // read in environment variables that match
 	// If a config file is found, read it in.
@@ -50,7 +48,13 @@ func initLogger() {
 	if err != nil {
 		log.Fatalln("can't unmarshal viper to Config :", err)
 	}
-	fmt.Println(cfg)
+	_, err = xlog.New(cfg)
+	if err != nil {
+		log.Fatalln("can't init zap logger :", err)
+	}
+	xlog.SS().Debug("init logger done")
+	xlog.SS().Debug("using config file: ", cfgFile)
+
 }
 
 //Execute the endpoint to expose
