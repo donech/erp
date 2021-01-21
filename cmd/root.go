@@ -30,7 +30,6 @@ var rootCmd = &cobra.Command{
 func init() {
 	cobra.OnInitialize(initConfig, initLogger)
 	rootCmd.PersistentFlags().StringVarP(&cfgFile, "config", "c", "app.yaml", "-c app.yaml")
-	rootCmd.AddCommand(exampleCmd)
 }
 
 func initConfig() {
@@ -52,8 +51,8 @@ func initLogger() {
 	if err != nil {
 		log.Fatalln("can't init zap logger :", err)
 	}
-	xlog.SS().Debug("init logger done")
-	xlog.SS().Debug("using config file: ", cfgFile)
+	xlog.SS().Info("init logger done")
+	xlog.SS().Info("using config file: ", cfgFile)
 
 }
 

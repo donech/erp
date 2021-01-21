@@ -5,3 +5,7 @@ log:
   file:
     filename: "/Users/piaoweixiong/apps/log/app/erp/app.log"
     maxSize: 500
+grpc:
+  port: ":20000"
+  enableReflect: true
+  enableGateWay: true
