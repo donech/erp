@@ -9,3 +9,11 @@ grpc:
   port: ":20000"
   enableReflect: true
   enableGateWay: true
+db:
+  dsn: "root:123456@tcp(127.0.0.1:3306)/erp?charset=utf8mb4&parseTime=true&loc=Local"
+  maxIdle: 10
+  maxOpen: 200
+  maxLifetime: 60
+  logMode: false
+redis:
+  Addr: ":6379"

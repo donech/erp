@@ -22,6 +22,8 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/donech/erp/internal/common"
+
 	"github.com/donech/erp/internal"
 	"github.com/donech/tool/entry/xgrpc"
 	"github.com/donech/tool/xlog"
@@ -36,6 +38,8 @@ var grpcCmd = &cobra.Command{
 	Short: "erp grpc api service",
 	Long:  `erp grpc api service`,
 	Run: func(cmd *cobra.Command, args []string) {
+		clean := common.InitGlobal()
+		defer clean()
 		cfg := xgrpc.Config{}
 		vp := viper.Sub("grpc")
 		if vp == nil {

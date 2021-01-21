@@ -53,7 +53,6 @@ func initLogger() {
 	}
 	xlog.SS().Info("init logger done")
 	xlog.SS().Info("using config file: ", cfgFile)
-
 }
 
 //Execute the endpoint to expose
