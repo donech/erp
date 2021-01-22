@@ -15,6 +15,7 @@ var dbClient *gorm.DB
 //redisClient global redisClient
 var redisClient *redis.Client
 
+//InitGlobal init global vat and return a clean up func.
 func InitGlobal() func() {
 	redisViper := viper.Sub("redis")
 	clean := func() {}
@@ -46,18 +47,22 @@ func InitGlobal() func() {
 	return clean
 }
 
+//RegisteGlobalDB  registe global dbClient
 func RegisteGlobalDB(db *gorm.DB) {
 	dbClient = db
 }
 
+//RegisteGlobalRedis registe global redisClient
 func RegisteGlobalRedis(client *redis.Client) {
 	redisClient = client
 }
 
+//GetDB get global dbClient
 func GetDB() *gorm.DB {
 	return dbClient
 }
 
+//GetRedis get global redisClient
 func GetRedis() *redis.Client {
 	return redisClient
 }
