@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+package proto;
+
+// The System service definition.
+service System {
+    //CreateUser 
+    rpc CreateUser (CreateUserReq) returns (CreateUserResp) {}
+}
+
+// The request message containing the user's name.
+message CreateUserReq {
+    string account = 1;
+    string name = 2;
+    string password = 3;
+}
+
+// The response message containing the greetings
+message CreateUserResp {
+    int32 code = 1;
+    string msg = 2;
+}

@@ -14,5 +14,7 @@ func NewGrpcEntry(cfg xgrpc.Config) entry.Entry {
 
 func registeServer(server *grpc.Server) {
 	srv := service.GreeterService{}
+	system := service.SystemService{}
 	proto.RegisterGreeterServer(server, srv)
+	proto.RegisterSystemServer(server, system)
 }

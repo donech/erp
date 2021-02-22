@@ -42,7 +42,7 @@ func InitGlobal() func() {
 	if err != nil {
 		xlog.SS().Fatalf("init global dbClient error: ", err)
 	}
-	db, clean := xdb.Open(dbCfg)
+	db, clean := xdb.New(dbCfg)
 	RegisteGlobalDB(db)
 	return clean
 }
