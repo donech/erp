@@ -17,3 +17,7 @@ db:
   logMode: false
 redis:
   Addr: ":6379"
+jwt:
+  singingAlgorithm: "HS256"
+  key: "NIRVANA"
+  timeout: "60m"

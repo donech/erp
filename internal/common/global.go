@@ -2,6 +2,7 @@ package common
 
 import (
 	"github.com/donech/tool/xdb"
+	"github.com/donech/tool/xjwt"
 	"github.com/donech/tool/xlog"
 	"github.com/donech/tool/xredis"
 	"github.com/go-redis/redis"
@@ -65,4 +66,35 @@ func GetDB() *gorm.DB {
 //GetRedis get global redisClient
 func GetRedis() *redis.Client {
 	return redisClient
+}
+
+var jwtFactory *xjwt.JWTFactory
+
+func InitJwtFactory(login xjwt.LoginFunc) {
+	jwtViper := viper.Sub("jwt")
+	if jwtViper == nil {
+		xlog.SS().Fatalf("init global jwt factory error: not found config for jwt factory in yaml")
+		return
+	}
+	cfg := xjwt.Config{}
+	err := jwtViper.Unmarshal(&cfg)
+	if err != nil {
+		xlog.SS().Fatalf("init global jwt factory error: ", err)
+		return
+	}
+	xlog.SS().Debug("jwtConfig is ", cfg)
+	jf, err := xjwt.NewJWTFactory(cfg, xjwt.WithLoginFunc(login))
+	if err != nil {
+		xlog.SS().Fatalf("init global jwt factory error: ", err)
+		return
+	}
+	SetJwtFactory(&jf)
+}
+
+func SetJwtFactory(jf *xjwt.JWTFactory) {
+	jwtFactory = jf
+}
+
+func GetJwtFactory() *xjwt.JWTFactory {
+	return jwtFactory
 }

@@ -2,6 +2,9 @@ package system
 
 import (
 	"context"
+	"errors"
+
+	"github.com/donech/tool/xjwt"
 
 	"github.com/donech/erp/internal/common"
 	"github.com/donech/tool/xdb"
@@ -34,4 +37,30 @@ func GetUserByAccount(ctx context.Context, account string) (*entity.User, error)
 		return nil, err
 	}
 	return &user, nil
+}
+
+func GetUserById(ctx context.Context, id int64) (*entity.User, error) {
+	db := xdb.Trace(ctx, common.GetDB())
+	user := entity.User{}
+	err := db.Model(user).Where("id = ?", id).First(&user).Error
+	if err != nil {
+		return nil, err
+	}
+	return &user, nil
+}
+
+//AuthUser 通过解析 jwtToken 获取用户信息
+//flag 控制是否去数据库读取详情
+func AuthUser(ctx context.Context, flag bool) (*entity.User, error) {
+	claims := xjwt.GetClaimsFromCtx(ctx)
+	if id, ok := claims["id"]; ok {
+		if !flag {
+			return &entity.User{
+				Entity: xdb.Entity{ID: int64(id.(float64))},
+				Name:   claims["name"].(string),
+			}, nil
+		}
+		return GetUserById(ctx, int64(id.(float64)))
+	}
+	return nil, errors.New("no auth user found")
 }
