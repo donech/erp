@@ -3,6 +3,7 @@ package system
 import (
 	"context"
 	"errors"
+	"strconv"
 
 	"github.com/donech/tool/xjwt"
 
@@ -53,14 +54,15 @@ func GetUserById(ctx context.Context, id int64) (*entity.User, error) {
 //flag 控制是否去数据库读取详情
 func AuthUser(ctx context.Context, flag bool) (*entity.User, error) {
 	claims := xjwt.GetClaimsFromCtx(ctx)
-	if id, ok := claims["id"]; ok {
+	if id, ok := claims["id"].(string); ok {
+		number, _ := strconv.ParseInt(id, 10, 64)
 		if !flag {
 			return &entity.User{
-				Entity: xdb.Entity{ID: int64(id.(float64))},
+				Entity: xdb.Entity{ID: number},
 				Name:   claims["name"].(string),
 			}, nil
 		}
-		return GetUserById(ctx, int64(id.(float64)))
+		return GetUserById(ctx, number)
 	}
 	return nil, errors.New("no auth user found")
 }

@@ -3,6 +3,7 @@ package internal
 import (
 	"context"
 	"errors"
+	"strconv"
 
 	"github.com/donech/erp/internal/common"
 
@@ -43,7 +44,7 @@ func Login(ctx context.Context, form xjwt.LoginForm) (jwt.MapClaims, error) {
 	}
 
 	return jwt.MapClaims{
-		"id":   user.ID,
+		"id":   strconv.FormatInt(user.ID, 10),
 		"name": user.Name,
 	}, nil
 }
