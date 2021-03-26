@@ -2,8 +2,15 @@ syntax="proto3";
 
 package proto;
 
+import "google/api/annotations.proto";
+
 service Common {
-  rpc Login(LoginReq) returns (LoginResp){}
+  rpc Login(LoginReq) returns (LoginResp){
+    option (google.api.http) = {
+      post: "/v1/login",
+      body: "*"
+    };
+  }
 }
 
 message LoginReq {
