@@ -25,12 +25,14 @@ func NewGrpcEntry(cfg xgrpc.Config) entry.Entry {
 }
 
 func registeServer(server *grpc.Server) {
-	srv := service.GreeterService{}
+	srv := service.HealthCheckService{}
 	systemSrv := service.SystemService{}
 	commonSrv := service.CommonService{}
-	proto.RegisterGreeterServer(server, srv)
+	admSrv := service.AdminService{}
+	proto.RegisterHealthCheckServer(server, srv)
 	proto.RegisterSystemServer(server, systemSrv)
 	proto.RegisterCommonServer(server, commonSrv)
+	proto.RegisterAdminServer(server, admSrv)
 }
 
 func Login(ctx context.Context, form xjwt.LoginForm) (jwt.MapClaims, error) {

@@ -13,4 +13,4 @@ build: gen
 
 .PHONY: gen
 gen:
-	protoc --go_out=plugins=grpc:. ./internal/proto/*.proto
+	protoc --go_out=plugins=grpc:./internal/proto/ ./internal/proto/*.proto -I$(GOPATH)/src/github.com/grpc-ecosystem/grpc-gateway/third_party/googleapis -I./internal/proto/

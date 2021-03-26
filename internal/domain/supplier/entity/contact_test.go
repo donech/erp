@@ -1,6 +1,7 @@
 package entity
 
 import (
+	"context"
 	"fmt"
 	"testing"
 
@@ -45,8 +46,9 @@ func TestCreateSupplier(t *testing.T) {
 			LastName:  "朴1",
 			Title:     "教1师",
 			Relations: []Relation{{
-				Type:  1,
-				Value: "123456",
+				Entity: xdb.Entity{ID: 4},
+				Type:   1,
+				Value:  "123456",
 			}},
 		}},
 	}
@@ -55,4 +57,17 @@ func TestCreateSupplier(t *testing.T) {
 		t.Fatal("create Supplier error=", err)
 	}
 	fmt.Printf("%+v", s)
+}
+
+func TestContact_GetRelations(t *testing.T) {
+	c := Contact{
+		Entity: xdb.Entity{ID: 4},
+	}
+	relations := c.GetRelations(context.Background(), db)
+	fmt.Printf("relations: %v", relations)
+	for _, relation := range relations {
+		if relation.ContactId != c.ID {
+			t.Fatal("GetRelations fail", c, relation)
+		}
+	}
 }
