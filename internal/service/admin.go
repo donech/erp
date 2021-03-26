@@ -7,6 +7,7 @@ import (
 	"github.com/donech/erp/internal/proto"
 	"github.com/donech/tool/xlog"
 	"github.com/jinzhu/copier"
+	"go.uber.org/zap"
 )
 
 type AdminService struct{}
@@ -16,7 +17,7 @@ func (AdminService) GetSupplierList(ctx context.Context, req *proto.SupplierList
 	if err != nil {
 		return nil, err
 	}
-	xlog.S(ctx).Info("suppliers: ", suppliers)
+	xlog.L(ctx).Debug("GetSupplierList", zap.Reflect("suppliers", suppliers))
 	dto := make([]*proto.Supplier, 0, len(suppliers))
 	err = copier.Copy(&dto, suppliers)
 	if err != nil {

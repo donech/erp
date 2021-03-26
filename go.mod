@@ -13,6 +13,7 @@ require (
 	github.com/onsi/gomega v1.10.5 // indirect
 	github.com/spf13/cobra v1.1.1
 	github.com/spf13/viper v1.7.1
+	go.uber.org/zap v1.15.0
 	google.golang.org/genproto v0.0.0-20200513103714-09dca8ec2884
 	google.golang.org/grpc v1.33.1
 )
