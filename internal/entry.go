@@ -21,7 +21,20 @@ import (
 
 func NewGrpcEntry(cfg xgrpc.Config) entry.Entry {
 	common.InitJwtFactory(Login)
-	return xgrpc.New(cfg, xgrpc.WithRegisteServer(registeServer), xgrpc.WithJwtFactory(common.GetJwtFactory()))
+	return xgrpc.New(cfg,
+		xgrpc.WithRegisteServer(registeServer),
+		xgrpc.WithJwtFactory(common.GetJwtFactory()),
+		xgrpc.WithJumpMethods(GetJumpMethods()),
+	)
+}
+
+//GetJumpMethods 不进行 jwt 验证的 grpc handle
+func GetJumpMethods() map[string]bool {
+	return map[string]bool{
+		"/proto.HealthCheck/Liveness":true,
+		"/proto.HealthCheck/Readiness":true,
+		"/proto.Common/Login":true,
+	}
 }
 
 func registeServer(server *grpc.Server) {

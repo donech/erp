@@ -13,7 +13,7 @@ import (
 type AdminService struct{}
 
 func (AdminService) GetSupplierList(ctx context.Context, req *proto.SupplierListReq) (*proto.SupplierListResp, error) {
-	suppliers, err := supplier.GetSupplierByPage(ctx, nil, 1, 20);
+	suppliers, err := supplier.GetSupplierByPage(ctx, nil, 1, 20)
 	if err != nil {
 		return nil, err
 	}
