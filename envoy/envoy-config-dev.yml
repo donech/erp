@@ -8,7 +8,7 @@ static_resources:
   listeners:
     - name: main-listener
       address:
-        socket_address: { address: 0.0.0.0, port_value: 51051 }      #2
+        socket_address: { address: 0.0.0.0, port_value: 51051 }
       filter_chains:
         - filters:
             - name: envoy.http_connection_manager
@@ -22,7 +22,6 @@ static_resources:
                       domains: ["*"]
                       routes:
                         - match: { prefix: "/", grpc: {} }
-                          #3 see next line!
                           route: { cluster: grpc-backend-services, timeout: { seconds: 60 } }
                 http_filters:
                   - name: envoy.grpc_json_transcoder
@@ -33,11 +32,11 @@ static_resources:
                         add_whitespace: true
                         always_print_primitive_fields: true
                         always_print_enums_as_ints: false
-                        preserve_proto_field_names: false                        #6
+                        preserve_proto_field_names: false
                   - name: envoy.router
 
   clusters:
-    - name: grpc-backend-services                  #7
+    - name: grpc-backend-services
       connect_timeout: 1.25s
       type: logical_dns
       lb_policy: round_robin
@@ -45,5 +44,5 @@ static_resources:
       http2_protocol_options: {}
       hosts:
         - socket_address:
-            address: host.docker.internal                       #8
+            address: host.docker.internal
             port_value: 20000
