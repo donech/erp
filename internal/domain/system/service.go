@@ -3,6 +3,8 @@ package system
 import (
 	"context"
 	"errors"
+	"github.com/donech/tool/tabler"
+	"github.com/jinzhu/gorm"
 	"strconv"
 
 	"github.com/donech/tool/xjwt"
@@ -12,6 +14,16 @@ import (
 
 	"github.com/donech/erp/internal/domain/system/entity"
 )
+
+func Users(ctx context.Context, pager tabler.Pager) ([]*entity.User, error) {
+	db := xdb.Trace(ctx, common.GetDB())
+	var res []*entity.User
+	table := tabler.NewTable(db, "id", pager)
+	err := table.FindAll(func(db *gorm.DB) *gorm.DB {
+		return db.Model(entity.User{}).Order("id desc").Find(&res)
+	})
+	return res, err
+}
 
 func CreateUser(ctx context.Context, account, name, password string) (int64, error) {
 	en := entity.User{

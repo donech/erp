@@ -3,7 +3,7 @@ admin:
   address:
     socket_address:
       address: 0.0.0.0
-      port_value: 88
+      port_value: 10000
 static_resources:
   listeners:
     - name: main-listener
@@ -14,6 +14,33 @@ static_resources:
             - name: envoy.http_connection_manager
               config:
                 stat_prefix: grpc_json
+                access_log:
+                  - name: envoy.file_access_log
+                    typed_config:
+                      "@type": type.googleapis.com/envoy.config.accesslog.v2.FileAccessLog
+                      path: "/tmp/http_access.log"
+                      json_format: {
+                        "start_time": "%START_TIME%",
+                        "method": "%REQ(:METHOD)%",
+                        "path": "%REQ(X-ENVOY-ORIGINAL-PATH?:PATH)%",
+                        "protocal": "%PROTOCOL%",
+                        "response_code": "%RESPONSE_CODE%",
+                        "response_flags": "%RESPONSE_FLAGS%",
+                        "bytes_received": "%BYTES_RECEIVED%",
+                        "bytes_sent": "%BYTES_SENT%",
+                        "duration": "%DURATION%",
+                        "service_time": "%RESP(X-ENVOY-UPSTREAM-SERVICE-TIME)%",
+                        "x-forwarded-for": "%REQ(X-FORWARDED-FOR)%",
+                        "user-agent": "%REQ(USER-AGENT)%",
+                        "x-request-id": "%REQ(X-REQUEST-ID)%",
+                        "authority": "%REQ(:AUTHORITY)%",
+                        "upstream_host": "%UPSTREAM_HOST%",
+                        "x-device-id": "%REQ(X-DEVICE-ID)%",
+                        "x-user-number": "%REQ(X-USER-NUMBER)%",
+                        "cookie": "%REQ(COOKIE)%",
+                        "token": "%REQ(TOKEN)%",
+                        "auth-token": "%REQ(AUTH-TOKEN)%",
+                      }
                 codec_type: AUTO
                 route_config:
                   name: local_route
@@ -27,7 +54,7 @@ static_resources:
                   - name: envoy.grpc_json_transcoder
                     config:
                       proto_descriptor: "/data/service_definition.pb"
-                      services: ["proto.Admin","proto.HealthCheck","proto.Common"]
+                      services: ["proto.Admin","proto.HealthCheck","proto.Common", "proto.System"]
                       print_options:
                         add_whitespace: true
                         always_print_primitive_fields: true
