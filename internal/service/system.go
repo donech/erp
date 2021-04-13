@@ -2,8 +2,8 @@ package service
 
 import (
 	"context"
+	"github.com/donech/erp/internal/tool"
 	"github.com/donech/tool/tabler"
-	"github.com/jinzhu/copier"
 	"math"
 
 	"github.com/donech/erp/internal/domain/system"
@@ -34,21 +34,19 @@ func (s SystemService) Users(ctx context.Context, req *proto.UsersReq) (*proto.U
 	users, err := system.Users(ctx, tabler.Pager{
 		PageSize: req.PageSize,
 		Cursor:   req.Cursor,
+		PageNum: req.PageNum,
 	})
 	if err != nil {
 		return nil, err
 	}
 	var data []*proto.UsersResp_Data
-	err = copier.CopyWithOption(&data, users, copier.Option{
-		IgnoreEmpty: true,
-		DeepCopy:    true,
-	})
+	err = tool.JsonCopy(users, &data)
 	if err != nil {
 		return nil, err
 	}
 	return &proto.UsersResp{
 		Code:                 0,
-		Msg:                  "",
+		Msg:                  "success",
 		Data:                 data,
 	}, err
 }

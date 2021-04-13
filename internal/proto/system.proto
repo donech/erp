@@ -38,6 +38,7 @@ message CreateUserResp {
 message UsersReq {
     int32 page_size = 1;
     int64 cursor = 2;
+    int32 pageNum = 3;
 }
 
 // The response message containing the greetings
