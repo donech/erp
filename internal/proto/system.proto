@@ -2,7 +2,9 @@ syntax = "proto3";
 
 package proto;
 
+import "messages.proto";
 import "google/api/annotations.proto";
+
 
 // The System service definition.
 service System {
@@ -36,9 +38,8 @@ message CreateUserResp {
 
 //UsersReq.
 message UsersReq {
-    int32 page_size = 1;
-    int64 cursor = 2;
-    int32 pageNum = 3;
+    string name = 1;
+    Pager pager = 2;
 }
 
 // The response message containing the greetings
@@ -52,4 +53,5 @@ message UsersResp {
     int32 code = 1;
     string msg = 2;
     repeated Data data = 3;
+    Pager pager = 4;
 }

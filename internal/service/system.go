@@ -2,9 +2,11 @@ package service
 
 import (
 	"context"
+	"fmt"
+	"math"
+
 	"github.com/donech/erp/internal/tool"
 	"github.com/donech/tool/tabler"
-	"math"
 
 	"github.com/donech/erp/internal/domain/system"
 
@@ -25,17 +27,21 @@ func (SystemService) CreateUser(ctx context.Context, req *proto.CreateUserReq) (
 }
 
 func (s SystemService) Users(ctx context.Context, req *proto.UsersReq) (*proto.UsersResp, error) {
-	if req.PageSize == 0 {
-		req.PageSize = 10
+	if req.Pager.PageSize == 0 {
+		req.Pager.PageSize = 10
 	}
-	if req.Cursor == 0 {
-		req.Cursor = math.MaxInt64
+	if req.Pager.PageSize == 0 && req.Pager.Cursor == 0 {
+		req.Pager.Cursor = math.MaxInt64
 	}
-	users, err := system.Users(ctx, tabler.Pager{
-		PageSize: req.PageSize,
-		Cursor:   req.Cursor,
-		PageNum: req.PageNum,
-	})
+	var condition string
+	if req.Name != "" {
+		condition = "name like ?"
+	}
+	users, hasMore, err := system.Users(ctx, tabler.Pager{
+		PageSize: req.Pager.PageSize,
+		Cursor:   req.Pager.Cursor,
+		PageNum:  req.Pager.PageNum,
+	}, condition, fmt.Sprintf("%%%s%%", req.Name))
 	if err != nil {
 		return nil, err
 	}
@@ -44,10 +50,11 @@ func (s SystemService) Users(ctx context.Context, req *proto.UsersReq) (*proto.U
 	if err != nil {
 		return nil, err
 	}
+	req.Pager.HasMore = hasMore
 	return &proto.UsersResp{
-		Code:                 0,
-		Msg:                  "success",
-		Data:                 data,
+		Code:  0,
+		Msg:   "success",
+		Data:  data,
+		Pager: req.Pager,
 	}, err
 }
-

@@ -1,0 +1,10 @@
+syntax = "proto3";
+
+package proto;
+
+message Pager {
+    int32 page_size = 1;
+    int32 pageNum = 2;
+    int64 cursor = 3;
+    bool hasMore = 4;
+}
