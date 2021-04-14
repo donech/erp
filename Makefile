@@ -35,6 +35,19 @@ stop-envoy:
 start-envoy:
 	docker run -itd --rm --name envoy \
     	  -p 51051:51051 \
+    	  -p 10000:10000 \
           -v "$(shell pwd)/internal/proto/service_definition.pb:/data/service_definition.pb:ro" \
           -v "$(shell pwd)/envoy/envoy-config-dev.yml:/etc/envoy/envoy.yaml:ro" \
           envoyproxy/envoy
+
+.PHONY: in-envory
+in-envoy:
+	docker exec -it envoy /bin/bash
+
+.PHONY: valid-envoy
+valid-envoy:
+	docker run --rm \
+              -v "$(shell pwd)/internal/proto/service_definition.pb:/data/service_definition.pb:ro" \
+              -v "$(shell pwd)/envoy/envoy-config-dev.yml:/etc/envoy/envoy.yaml:ro" \
+              envoyproxy/envoy \
+              --mode validate -c /etc/envoy/envoy.yaml
