@@ -10,7 +10,7 @@
 ## layout 描述
 
     1. bin 系统命令输出目录
-    1. cmd 系统各命令目录
+    1. cmd 系统各命令目录
     1. frontend erp 系统前端组建库
     1. hack 系统脚本目录, bash 或者 jenkinsfile 等等
     1. internal 系统内部目录, 主逻辑目录
