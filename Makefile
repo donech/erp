@@ -13,8 +13,8 @@ build: gen
 
 .PHONY: gen
 gen:
-	protoc --go_out=plugins=grpc:./internal/proto/ ./internal/proto/*.proto -I$(GOPATH)/src/github.com/grpc-ecosystem/grpc-gateway/third_party/googleapis -I./internal/proto/
-	protoc --proto_path=./internal/proto/ --proto_path=$(GOPATH)/src/github.com/grpc-ecosystem/grpc-gateway/third_party/googleapis -I$(GOPATH)/src/github.com/grpc-ecosystem/grpc-gateway/third_party/googleapis -I./internal/proto/  --include_imports --include_source_info --descriptor_set_out=./internal/proto/service_definition.pb ./internal/proto/*.proto
+	protoc --go_out=plugins=grpc:./internal/proto/ -I./internal/proto/third_party/googleapis ./internal/proto/*.proto -I./internal/proto/
+	protoc --proto_path=./internal/proto/ -I./internal/proto/ -I./internal/proto/third_party/googleapis  --include_imports --include_source_info --descriptor_set_out=./internal/proto/service_definition.pb ./internal/proto/*.proto
 
 foundEnvoy := $(shell docker ps -f "name=envoy" -q | grep -q . && echo Found || echo Not Found)
 
