@@ -6,6 +6,9 @@
 
     1. 快速启动 `make run`
     1. 新增自命令 `cobra add SUBCOMMAND`, 安装 cobra `go get -u github.com/spf13/cobra/cobra`
+    1. 项目初始化
+        1. make depend
+        1. make run
 
 ## layout 描述
 

@@ -9,11 +9,22 @@ static_resources:
     - name: main-listener
       address:
         socket_address: { address: 0.0.0.0, port_value: 51051 }
+      traffic_direction: OUTBOUND
       filter_chains:
         - filters:
             - name: envoy.filters.network.http_connection_manager
               typed_config:
                 "@type": type.googleapis.com/envoy.extensions.filters.network.http_connection_manager.v3.HttpConnectionManager
+                generate_request_id: true
+                tracing:
+                  provider:
+                    name: envoy.tracers.zipkin
+                    typed_config:
+                      "@type": type.googleapis.com/envoy.config.trace.v3.ZipkinConfig
+                      collector_cluster: jaeger
+                      collector_endpoint: "/api/v2/spans"
+                      shared_span_context: false
+                      collector_endpoint_version: HTTP_JSON
                 stat_prefix: grpc_json
                 access_log:
                   - name: envoy.access_loggers.file
@@ -48,6 +59,35 @@ static_resources:
                   virtual_hosts:
                     - name: local_service
                       domains: ["*"]
+                      cors:
+                        allow_origin_string_match:
+                        - safe_regex:
+                            google_re2: { }
+                            regex: \*
+                        allow_methods: "GET"
+                        filter_enabled:
+                          default_value:
+                            numerator: 100
+                            denominator: HUNDRED
+                          runtime_key: cors.www.enabled
+                        shadow_enabled:
+                          default_value:
+                            numerator: 0
+                            denominator: HUNDRED
+                          runtime_key: cors.www.shadow_enabled
+                      typed_per_filter_config:
+                        envoy.filters.http.csrf:
+                          "@type": type.googleapis.com/envoy.extensions.filters.http.csrf.v3.CsrfPolicy
+                          filter_enabled:
+                            default_value:
+                              numerator: 100
+                              denominator: HUNDRED
+                            runtime_key: csrf.www.enabled
+                          shadow_enabled:
+                            default_value:
+                              numerator: 0
+                              denominator: HUNDRED
+                            runtime_key: csrf.www.shadow_enabled
                       routes:
                         - match: { prefix: "/", grpc: {} }
                           route: { cluster: grpc-backend-services, timeout: { seconds: 60 } }
@@ -75,3 +115,16 @@ static_resources:
         - socket_address:
             address: host.docker.internal
             port_value: 20000
+    - name: jaeger
+      connect_timeout: 1s
+      type: STRICT_DNS
+      lb_policy: ROUND_ROBIN
+      load_assignment:
+        cluster_name: jaeger
+        endpoints:
+          - lb_endpoints:
+              - endpoint:
+                  address:
+                    socket_address:
+                      address: host.docker.internal
+                      port_value: 9411

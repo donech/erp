@@ -3,10 +3,13 @@ CONFIG:=app.yaml
 APP:=grpc
 
 .PHONY: run
-run: gen envoy
+run: gen
 	@echo "wellcome for donech land, this will run the erp system for you."
 	@go run main.go $(APP) -c $(CONFIG)
 
+.PHONY: depend
+depend: envoy start-jaeger
+	@echo "start depends success"
 .PHONY: build
 build: gen
 	go build -o bin/$(PROJECT) main.go
@@ -51,3 +54,13 @@ valid-envoy:
               -v "$(shell pwd)/envoy/envoy-config-dev.yml:/etc/envoy/envoy.yaml:ro" \
               envoyproxy/envoy \
               --mode validate -c /etc/envoy/envoy.yaml
+
+.PHONY: start-jaeger
+start-jaeger:
+	@echo "jaeger starting"
+	docker run --rm -d \
+				  -e COLLECTOR_ZIPKIN_HTTP_PORT=9411 \
+				  -p 9411:9411\
+				  -p 16686:16686\
+                  jaegertracing/all-in-one
+	@echo "jaeger starting"
