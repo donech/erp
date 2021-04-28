@@ -1,6 +1,8 @@
 PROJECT:=erp
 CONFIG:=app.yaml
 APP:=grpc
+ENVOY:=envoy-donech
+JAEGER:=jaeger-donech
 
 .PHONY: run
 run: gen
@@ -19,7 +21,7 @@ gen:
 	protoc --go_out=plugins=grpc:./internal/proto/ -I./internal/proto/third_party/googleapis ./internal/proto/*.proto -I./internal/proto/
 	protoc --proto_path=./internal/proto/ -I./internal/proto/ -I./internal/proto/third_party/googleapis  --include_imports --include_source_info --descriptor_set_out=./internal/proto/service_definition.pb ./internal/proto/*.proto
 
-foundEnvoy := $(shell docker ps -f "name=envoy" -q | grep -q . && echo Found || echo Not Found)
+foundEnvoy := $(shell docker ps -f "name=$(ENVOY)" -q | grep -q . && echo Found || echo Not Found)
 
 .PHONY: envoy
 ifeq ($(foundEnvoy), Found)
@@ -32,11 +34,11 @@ endif
 
 .PHONY: stop-envoy
 stop-envoy:
-	docker stop envoy
+	docker stop $(ENVOY)
 
 .PHONY: start-envoy
 start-envoy:
-	docker run -itd --rm --name envoy \
+	docker run -itd --rm --name $(ENVOY) \
     	  -p 51051:51051 \
     	  -p 10000:10000 \
           -v "$(shell pwd)/internal/proto/service_definition.pb:/data/service_definition.pb:ro" \
@@ -45,7 +47,7 @@ start-envoy:
 
 .PHONY: in-envory
 in-envoy:
-	docker exec -it envoy /bin/bash
+	docker exec -it $(ENVOY) /bin/bash
 
 .PHONY: valid-envoy
 valid-envoy:
@@ -58,7 +60,7 @@ valid-envoy:
 .PHONY: start-jaeger
 start-jaeger:
 	@echo "jaeger starting"
-	docker run --rm -d \
+	docker run --rm -d --name=$(JAEGER) \
 				  -e COLLECTOR_ZIPKIN_HTTP_PORT=9411 \
 				  -p 9411:9411\
 				  -p 16686:16686\
