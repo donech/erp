@@ -16,10 +16,10 @@ service System {
         };
     }
 
-    //SaveUser
+    //CheckAccount
     rpc CheckAccount (SaveUserReq) returns (SaveUserResp) {
         option (google.api.http) = {
-            post: "/v1/users",
+            post: "/v1/check/account",
             body: "*"
         };
     }
