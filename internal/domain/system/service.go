@@ -35,17 +35,26 @@ func Users(ctx context.Context, pager tabler.Pager, condition ...interface{}) ([
 	return res, false, err
 }
 
-func CreateUser(ctx context.Context, account, name, password string) (int64, error) {
-	en := entity.User{
-		Account:  account,
-		Name:     name,
-		Password: password,
+func SaveUser(ctx context.Context, account, name, password string) (int64, error) {
+	user, err := GetUserByAccount(ctx, account)
+	if gorm.IsRecordNotFoundError(err) {
+		en := entity.User{
+			Account:  account,
+			Name:     name,
+			Password: common.EncryptPassword(password),
+		}
+		err = xdb.Trace(ctx, common.GetDB()).Create(&en).Error
+		if err != nil {
+			return 0, err
+		}
+		return en.ID, nil
 	}
-	err := xdb.Trace(ctx, common.GetDB()).Create(&en).Error
+	user.Name = name
+	err = UpdateUser(ctx, user)
 	if err != nil {
 		return 0, err
 	}
-	return en.ID, nil
+	return user.ID, nil
 }
 
 func UpdateUser(ctx context.Context, user *entity.User) error {

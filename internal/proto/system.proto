@@ -8,13 +8,22 @@ import "google/api/annotations.proto";
 
 // The System service definition.
 service System {
-    //CreateUser 
-    rpc CreateUser (CreateUserReq) returns (CreateUserResp) {
+    //SaveUser 
+    rpc SaveUser (SaveUserReq) returns (SaveUserResp) {
         option (google.api.http) = {
             post: "/v1/users",
             body: "*"
         };
     }
+
+    //SaveUser
+    rpc CheckAccount (SaveUserReq) returns (SaveUserResp) {
+        option (google.api.http) = {
+            post: "/v1/users",
+            body: "*"
+        };
+    }
+
     rpc Users (UsersReq) returns (UsersResp) {
         option (google.api.http) = {
             get: "/v1/users",
@@ -23,14 +32,14 @@ service System {
 }
 
 // The request message containing the user's name.
-message CreateUserReq {
+message SaveUserReq {
     string account = 1;
     string name = 2;
     string password = 3;
 }
 
 // The response message containing the greetings
-message CreateUserResp {
+message SaveUserResp {
     int32 code = 1;
     string msg = 2;
 }
@@ -54,4 +63,13 @@ message UsersResp {
     string msg = 2;
     repeated Data data = 3;
     Pager pager = 4;
+}
+
+message CheckAccountReq {
+    string account = 1;
+}
+
+message CheckAccountResp {
+    int32 code = 1;
+    string msg = 2;
 }

@@ -5,8 +5,12 @@ import (
 	"fmt"
 	"math"
 
+	"github.com/jinzhu/gorm"
+
+	"github.com/donech/erp/internal/common"
 	"github.com/donech/erp/internal/tool"
 	"github.com/donech/tool/tabler"
+	"github.com/donech/tool/xlog"
 
 	"github.com/donech/erp/internal/domain/system"
 
@@ -15,14 +19,15 @@ import (
 
 type SystemService struct{}
 
-func (SystemService) CreateUser(ctx context.Context, req *proto.CreateUserReq) (*proto.CreateUserResp, error) {
-	_, err := system.CreateUser(ctx, req.Account, req.Name, req.Password)
+func (SystemService) SaveUser(ctx context.Context, req *proto.SaveUserReq) (*proto.SaveUserResp, error) {
+	_, err := system.SaveUser(ctx, req.Account, req.Name, req.Password)
 	if err != nil {
+		xlog.S(ctx).Errorf("SaveUser error, req=%v, err=%v", req, err)
 		return nil, err
 	}
-	return &proto.CreateUserResp{
-		Code: 0,
-		Msg:  "创建用户成功",
+	return &proto.SaveUserResp{
+		Code: common.SuccessCode,
+		Msg:  common.ResponseMsg(common.SuccessCode),
 	}, nil
 }
 
@@ -43,18 +48,38 @@ func (s SystemService) Users(ctx context.Context, req *proto.UsersReq) (*proto.U
 		PageNum:  req.Pager.PageNum,
 	}, condition, fmt.Sprintf("%%%s%%", req.Name))
 	if err != nil {
+		xlog.S(ctx).Errorf("get users error, req=%v, err=%v", req, err)
 		return nil, err
 	}
 	var data []*proto.UsersResp_Data
 	err = tool.JsonCopy(users, &data)
 	if err != nil {
+		xlog.S(ctx).Errorf("JsonCopy error, users=%v, err=%v", users, err)
 		return nil, err
 	}
 	req.Pager.HasMore = hasMore
 	return &proto.UsersResp{
-		Code:  0,
-		Msg:   "success",
+		Code:  common.SuccessCode,
+		Msg:   common.ResponseMsg(common.SuccessCode),
 		Data:  data,
 		Pager: req.Pager,
 	}, err
+}
+
+func (s SystemService) CheckAccount(ctx context.Context, req *proto.SaveUserReq) (*proto.SaveUserResp, error) {
+	_, err := system.GetUserByAccount(ctx, req.Account)
+	if gorm.IsRecordNotFoundError(err) {
+		return &proto.SaveUserResp{
+			Code: common.SuccessCode,
+			Msg:  common.ResponseMsg(common.SuccessCode),
+		}, nil
+	}
+	if err != nil {
+		xlog.S(ctx).Errorf("system.GetUserByAccount error, req=%v, err=%v", req, err)
+		return nil, err
+	}
+	return &proto.SaveUserResp{
+		Code: common.ErrorCode,
+		Msg:  "account already exist",
+	}, nil
 }

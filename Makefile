@@ -10,7 +10,7 @@ run: gen
 	@go run main.go $(APP) -c $(CONFIG)
 
 .PHONY: depend
-depend: envoy start-jaeger
+depend: envoy jaeger
 	@echo "start depends success"
 .PHONY: build
 build: gen
@@ -57,6 +57,18 @@ valid-envoy:
               envoyproxy/envoy \
               --mode validate -c /etc/envoy/envoy.yaml
 
+
+
+foundJaeger := $(shell docker ps -f "name=$(JAEGER)" -q | grep -q . && echo Found || echo Not Found)
+
+.PHONY: jaeger
+ifeq ($(foundJaeger), Found)
+jaeger: stop-jaeger start-jaeger
+	@echo "stop and start jaeger success"
+else
+jaeger: start-jaeger
+	@echo "start jaeger success"
+endif
 .PHONY: start-jaeger
 start-jaeger:
 	@echo "jaeger starting"
@@ -66,3 +78,8 @@ start-jaeger:
 				  -p 16686:16686\
                   jaegertracing/all-in-one
 	@echo "jaeger starting"
+
+.PHONY: stop-jaeger
+stop-jaeger:
+	docker stop $(JAEGER)
+
