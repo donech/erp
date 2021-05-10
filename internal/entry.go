@@ -5,13 +5,14 @@ import (
 	"errors"
 	"strconv"
 
+	erpv1 "github.com/donech/proto-go/donech/erp/v1"
+
 	"github.com/donech/erp/internal/common"
 
 	"github.com/donech/erp/internal/domain/system"
 
 	"github.com/dgrijalva/jwt-go"
 
-	"github.com/donech/erp/internal/proto"
 	"github.com/donech/erp/internal/service"
 	"github.com/donech/tool/entry"
 	"github.com/donech/tool/entry/xgrpc"
@@ -31,21 +32,20 @@ func NewGrpcEntry(cfg xgrpc.Config) entry.Entry {
 //GetJumpMethods 不进行 jwt 验证的 grpc handle
 func GetJumpMethods() map[string]bool {
 	return map[string]bool{
-		"/proto.HealthCheck/Liveness":true,
-		"/proto.HealthCheck/Readiness":true,
-		"/proto.Common/Login":true,
+		"/donech.erp.v1.GateAPI/Readiness": true,
+		"/donech.erp.v1.GateAPI/Liveness":  true,
+		"/donech.erp.v1.GateAPI/Login":     true,
 	}
 }
 
 func registeServer(server *grpc.Server) {
-	srv := service.HealthCheckService{}
-	systemSrv := service.SystemService{}
-	commonSrv := service.CommonService{}
-	admSrv := service.AdminService{}
-	proto.RegisterHealthCheckServer(server, srv)
-	proto.RegisterSystemServer(server, systemSrv)
-	proto.RegisterCommonServer(server, commonSrv)
-	proto.RegisterAdminServer(server, admSrv)
+	systemSrv := service.SystemAPIServer{}
+	gateSrv := service.GateAPIServer{}
+	admSrv := service.AdminAPIServer{}
+	erpv1.RegisterSystemAPIServer(server, systemSrv)
+	erpv1.RegisterAdminAPIServer(server, admSrv)
+	erpv1.RegisterGateAPIServer(server, gateSrv)
+
 }
 
 func Login(ctx context.Context, form xjwt.LoginForm) (jwt.MapClaims, error) {

@@ -4,6 +4,7 @@ go 1.15
 
 require (
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
+	github.com/donech/proto-go v0.0.0-20210510073443-cf4adccbbf29
 	github.com/donech/tool v1.0.0
 	github.com/go-redis/redis v6.15.9+incompatible
 	github.com/go-sql-driver/mysql v1.6.0 // indirect
@@ -26,7 +27,7 @@ require (
 	go.uber.org/zap v1.16.0
 	golang.org/x/net v0.0.0-20210420072503-d25e30425868 // indirect
 	golang.org/x/sys v0.0.0-20210420072515-93ed5bcd2bfe // indirect
-	google.golang.org/genproto v0.0.0-20210416161957-9910b6c460de
+	google.golang.org/genproto v0.0.0-20210506142907-4a47615972c2
 	google.golang.org/grpc v1.37.0
 	gopkg.in/ini.v1 v1.62.0 // indirect
 )

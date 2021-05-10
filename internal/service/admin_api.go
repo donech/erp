@@ -2,30 +2,31 @@ package service
 
 import (
 	"context"
+
 	"github.com/donech/erp/internal/common"
 	"github.com/donech/erp/internal/domain/supplier"
-	"github.com/donech/erp/internal/proto"
+	erpv1 "github.com/donech/proto-go/donech/erp/v1"
 	"github.com/donech/tool/xlog"
 	"github.com/jinzhu/copier"
 	"go.uber.org/zap"
 )
 
-type AdminService struct{}
+type AdminAPIServer struct{}
 
-func (AdminService) GetSupplierList(ctx context.Context, req *proto.SupplierListReq) (*proto.SupplierListResp, error) {
+func (s AdminAPIServer) GetSupplierList(ctx context.Context, request *erpv1.GetSupplierListRequest) (*erpv1.GetSupplierListResponse, error) {
 	suppliers, err := supplier.GetSupplierByPage(ctx, nil, 1, 20)
 	if err != nil {
 		return nil, err
 	}
 	xlog.L(ctx).Debug("GetSupplierList", zap.Reflect("suppliers", suppliers))
-	dto := make([]*proto.Supplier, 0, len(suppliers))
+	dto := make([]*erpv1.Supplier, 0, len(suppliers))
 	err = copier.Copy(&dto, suppliers)
 	if err != nil {
 		return nil, err
 	}
-	return &proto.SupplierListResp{
-		Code:                 common.SuccessCode,
-		Message:              common.ResponseMsg(common.SuccessCode),
-		Data:                 dto,
+	return &erpv1.GetSupplierListResponse{
+		Code:    common.SuccessCode,
+		Message: common.ResponseMsg(common.SuccessCode),
+		Data:    dto,
 	}, nil
 }

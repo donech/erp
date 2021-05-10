@@ -5,6 +5,7 @@
 go.sum
 erp
 main
+envoy/service_definition.pb
 
 # Binaries for programs and plugins
 *.exe
