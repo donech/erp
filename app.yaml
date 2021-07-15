@@ -3,7 +3,7 @@ log:
   format: json
   stdout: true
   file:
-    filename: "/Users/piaoweixiong/apps/log/app/erp/app.log"
+    filename: "/tmp/app.log"
     maxSize: 500
 grpc:
   port: ":20000"
