@@ -26,7 +26,7 @@ func (s AdminAPIServer) GetSupplierList(ctx context.Context, request *erpv1.GetS
 	}
 	return &erpv1.GetSupplierListResponse{
 		Code:    common.SuccessCode,
-		Message: common.ResponseMsg(common.SuccessCode),
+		Msg: common.ResponseMsg(common.SuccessCode),
 		Data:    dto,
 	}, nil
 }

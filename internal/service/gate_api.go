@@ -16,7 +16,7 @@ type GateAPIServer struct{}
 func (s GateAPIServer) Login(ctx context.Context, request *erpv1.LoginRequest) (*erpv1.LoginResponse, error) {
 	jwtFactory := common.GetJwtFactory()
 	token, err := jwtFactory.GenerateToken(ctx, xjwt.LoginForm{
-		Username: request.Account,
+		Username: request.Username,
 		Password: request.Password,
 	})
 	if err != nil {
@@ -36,13 +36,13 @@ func (s GateAPIServer) Login(ctx context.Context, request *erpv1.LoginRequest) (
 func (s GateAPIServer) Readiness(ctx context.Context, request *erpv1.ReadinessRequest) (*erpv1.ReadinessResponse, error) {
 	return &erpv1.ReadinessResponse{
 		Code:    common.SuccessCode,
-		Message: "pong",
+		Msg: "pong",
 	}, nil
 }
 
 func (s GateAPIServer) Liveness(ctx context.Context, request *erpv1.LivenessRequest) (*erpv1.LivenessResponse, error) {
 	return &erpv1.LivenessResponse{
 		Code:    common.SuccessCode,
-		Message: "pong",
+		Msg: "pong",
 	}, nil
 }

@@ -3,9 +3,8 @@ package service
 import (
 	"context"
 	"fmt"
-	"math"
-
 	erpv1 "github.com/donech/proto-go/donech/erp/v1"
+	"math"
 
 	"github.com/jinzhu/gorm"
 
@@ -84,5 +83,25 @@ func (s SystemAPIServer) Users(ctx context.Context, request *erpv1.UsersRequest)
 		Msg:   common.ResponseMsg(common.SuccessCode),
 		Data:  data,
 		Pager: request.Pager,
+	}, err
+}
+
+func (s SystemAPIServer) CurrentUser(ctx context.Context, request *erpv1.CurrentUserRequest) (*erpv1.CurrentUserResponse, error) {
+	user, err := system.AuthUser(ctx, true)
+	if err != nil {
+		xlog.S(ctx).Errorf("get auth user err=%v", err)
+	}
+	return &erpv1.CurrentUserResponse{
+		Code:  common.SuccessCode,
+		Msg:   common.ResponseMsg(common.SuccessCode),
+		Data:  &erpv1.CurrentUserResponse_Data{
+			Id:                   user.ID,
+			Name:                 user.Name,
+			Avatar:               "https://www.icode9.com/i/l/?n=18&i=blog/372674/201909/372674-20190925093845264-1858102286.png",
+			Email:                "solarpwx@yeah.net",
+			Title:                "CTO",
+			Phone:                "18001023261",
+			CreatedTime:          user.CreatedTime.Format("2006-01-02 13:04:05"),
+		},
 	}, err
 }
